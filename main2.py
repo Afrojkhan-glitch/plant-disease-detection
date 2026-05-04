@@ -5,9 +5,9 @@ import numpy as np
 import gdown
 import os
 
-
+# =========================
 # PAGE CONFIG
-
+# =========================
 st.set_page_config(
     page_title="PlantAI — Disease Detection",
     page_icon="🌿",
@@ -15,9 +15,9 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-
-#  CSS
-
+# =========================
+# CUSTOM CSS
+# =========================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
@@ -28,14 +28,20 @@ html, body, [class*="css"] {
     color: #e6edf3;
 }
 #MainMenu, footer, header { visibility: hidden; }
-.block-container { padding: 2rem 3rem; max-width: 1100px; }
 
+/* ── Responsive container ── */
+.block-container {
+    padding: 1rem 1rem !important;
+    max-width: 1100px !important;
+}
+
+/* ── Hero ── */
 .hero {
     background: linear-gradient(135deg, #0a3d1f 0%, #0d5c2e 50%, #0a3d1f 100%);
     border: 1px solid #1a5c30;
     border-radius: 20px;
-    padding: 3rem 2.5rem 2rem;
-    margin-bottom: 2rem;
+    padding: 2rem 1.5rem 1.5rem;
+    margin-bottom: 1.5rem;
     position: relative;
     overflow: hidden;
 }
@@ -49,12 +55,17 @@ html, body, [class*="css"] {
 }
 .hero-title {
     font-family: 'Playfair Display', serif;
-    font-size: 2.8rem;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
     color: #4ade80;
     margin: 0 0 0.4rem;
     line-height: 1.15;
 }
-.hero-sub { font-size: 1rem; color: #86efac; font-weight: 300; letter-spacing: 0.04em; }
+.hero-sub {
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    color: #86efac;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+}
 .hero-badge {
     display: inline-block;
     background: rgba(74,222,128,0.15);
@@ -68,48 +79,223 @@ html, body, [class*="css"] {
     border-radius: 20px;
     margin-bottom: 1rem;
 }
-.card { background: #161b22; border: 1px solid #21262d; border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; }
-.result-card { background: linear-gradient(135deg, #0d2818, #0a3d1f); border: 1px solid #22c55e; border-radius: 14px; padding: 1.5rem 2rem; margin: 1rem 0; }
-.result-disease { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #4ade80; margin: 0 0 0.3rem; }
-.result-conf { font-size: 0.9rem; color: #86efac; font-weight: 300; }
-.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
-.info-item { background: #0d1117; border: 1px solid #21262d; border-radius: 10px; padding: 1rem 1.2rem; }
-.info-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: #4ade80; font-weight: 500; margin-bottom: 0.4rem; }
-.info-text { font-size: 0.92rem; color: #c9d1d9; line-height: 1.5; }
+
+/* ── Cards ── */
+.card {
+    background: #161b22;
+    border: 1px solid #21262d;
+    border-radius: 14px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+}
+.result-card {
+    background: linear-gradient(135deg, #0d2818, #0a3d1f);
+    border: 1px solid #22c55e;
+    border-radius: 14px;
+    padding: 1.2rem 1.5rem;
+    margin: 1rem 0;
+}
+.result-disease {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    color: #4ade80;
+    margin: 0 0 0.3rem;
+    word-break: break-word;
+}
+.result-conf {
+    font-size: 0.9rem;
+    color: #86efac;
+    font-weight: 300;
+}
+
+/* ── Info Grid — responsive ── */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+@media (max-width: 600px) {
+    .info-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+.info-item {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+}
+.info-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #4ade80;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+}
+.info-text {
+    font-size: 0.88rem;
+    color: #c9d1d9;
+    line-height: 1.5;
+}
+
+/* ── Prediction bars ── */
 .pred-bar-wrap { margin: 0.5rem 0; }
-.pred-label { font-size: 0.82rem; color: #c9d1d9; margin-bottom: 3px; }
-.pred-bar-bg { background: #21262d; border-radius: 6px; height: 8px; overflow: hidden; }
-.pred-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #166534, #4ade80); }
-.pred-pct { font-size: 0.75rem; color: #4ade80; margin-top: 2px; text-align: right; }
-.chat-bubble { background: #0d2818; border: 1px solid #166534; border-radius: 12px 12px 12px 2px; padding: 1rem 1.2rem; font-size: 0.92rem; color: #c9d1d9; line-height: 1.6; margin-top: 0.5rem; }
-.chat-icon { width: 32px; height: 32px; background: #166534; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; margin-bottom: 0.5rem; }
-.warn-box { background: #2d1b00; border: 1px solid #d97706; border-radius: 10px; padding: 0.8rem 1.2rem; color: #fbbf24; font-size: 0.88rem; margin: 0.8rem 0; }
-.stat-row { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
-.stat-pill { background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.82rem; color: #86efac; }
+.pred-label {
+    font-size: 0.82rem;
+    color: #c9d1d9;
+    margin-bottom: 3px;
+    word-break: break-word;
+}
+.pred-bar-bg {
+    background: #21262d;
+    border-radius: 6px;
+    height: 8px;
+    overflow: hidden;
+}
+.pred-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #166534, #4ade80);
+}
+.pred-pct {
+    font-size: 0.75rem;
+    color: #4ade80;
+    margin-top: 2px;
+    text-align: right;
+}
+
+/* ── Chat bubble ── */
+.chat-bubble {
+    background: #0d2818;
+    border: 1px solid #166534;
+    border-radius: 12px 12px 12px 2px;
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    color: #c9d1d9;
+    line-height: 1.6;
+    margin-top: 0.5rem;
+    word-break: break-word;
+}
+.chat-icon {
+    width: 32px;
+    height: 32px;
+    background: #166534;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+}
+
+/* ── Warning box ── */
+.warn-box {
+    background: #2d1b00;
+    border: 1px solid #d97706;
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+    color: #fbbf24;
+    font-size: 0.88rem;
+    margin: 0.8rem 0;
+}
+
+/* ── Stat pills ── */
+.stat-row {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+.stat-pill {
+    background: rgba(74,222,128,0.08);
+    border: 1px solid rgba(74,222,128,0.2);
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-size: clamp(0.72rem, 2vw, 0.82rem);
+    color: #86efac;
+}
 .stat-pill strong { color: #4ade80; }
-.divider { border: none; border-top: 1px solid #21262d; margin: 1.5rem 0; }
-.stButton > button { background: linear-gradient(135deg, #166534, #15803d) !important; color: white !important; border: none !important; border-radius: 10px !important; padding: 0.6rem 2rem !important; font-family: 'DM Sans', sans-serif !important; font-weight: 500 !important; font-size: 1rem !important; width: 100% !important; }
+
+/* ── Divider ── */
+.divider {
+    border: none;
+    border-top: 1px solid #21262d;
+    margin: 1.5rem 0;
+}
+
+/* ── Button ── */
+.stButton > button {
+    background: linear-gradient(135deg, #166534, #15803d) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 0.6rem 2rem !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    width: 100% !important;
+}
 .stButton > button:hover { opacity: 0.85 !important; }
-.sec-heading { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: #4ade80; margin: 1.5rem 0 0.8rem; }
+
+/* ── Section heading ── */
+.sec-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #4ade80;
+    margin: 1.2rem 0 0.6rem;
+}
+
+/* ── Mobile columns fix ── */
+@media (max-width: 768px) {
+    .block-container {
+        padding: 0.5rem 0.5rem !important;
+    }
+    .hero {
+        padding: 1.5rem 1rem 1rem;
+        border-radius: 14px;
+    }
+    .result-card {
+        padding: 1rem;
+    }
+}
+
+/* ── File uploader ── */
+[data-testid="stFileUploader"] {
+    width: 100% !important;
+}
+
+/* ── Selectbox ── */
+[data-testid="stSelectbox"] {
+    width: 100% !important;
+}
+
+/* ── Image ── */
+[data-testid="stImage"] img {
+    border-radius: 12px !important;
+    width: 100% !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
-
+# =========================
 # LOAD MODEL
-
+# =========================
 @st.cache_resource
 def load_model():
     '''if not os.path.exists("model.keras"):
-        with st.spinner("⬇️ Downloading model... (first run only, ~120MB)"):
+        with st.spinner("Downloading model... (first run only, ~120MB)"):
             url = "https://drive.google.com/uc?id=1HHqxrrv_VNW6ydjCKsOu2YrCWCx6em4k"
             gdown.download(url, "model.keras", quiet=False, fuzzy=True)'''
     return tf.keras.models.load_model("model.h5", compile=False)
 
 model = load_model()
 
-
+# =========================
 # 60 CLASS NAMES
-
+# =========================
 class_names = [
     'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy',
     'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew', 'Cherry_(including_sour)___healthy',
@@ -132,8 +318,9 @@ class_names = [
     'Wheat__Yellow_Rust', 'Wheat__healthy_Leaf'
 ]
 
+# =========================
 # DISEASE KNOWLEDGE BASE
-
+# =========================
 disease_info = {
     "Apple___Apple_scab": {"info": "Fungal disease causing dark scabby lesions on leaves and fruits.", "treatment": "Apply fungicides like captan or myclobutanil.", "prevention": "Remove fallen leaves, improve air circulation.", "advice": "Prune infected branches and monitor regularly."},
     "Apple___Black_rot": {"info": "Fungal disease causing black rotting on fruits and leaves.", "treatment": "Use copper-based fungicide spray.", "prevention": "Remove mummified fruits and dead branches.", "advice": "Sanitize pruning tools between cuts."},
@@ -204,8 +391,9 @@ default_info = {
     "advice": "Monitor regularly and act early for best results."
 }
 
-# PREDICTION 
-
+# =========================
+# PREDICTION (224x224)
+# =========================
 def predict(image):
     img = tf.keras.preprocessing.image.load_img(image, target_size=(224,224))
     img = tf.keras.preprocessing.image.img_to_array(img)
@@ -215,19 +403,31 @@ def predict(image):
     top3_probs = preds[0][top3_idx]
     return top3_idx, top3_probs
 
-
+# =========================
 # CHATBOT
-
+# =========================
 def chatbot(disease, lang):
     clean = disease.replace("___", " → ").replace("__", " → ").replace("_", " ")
-    responses = {
-        "English": f"<b>Diagnosis:</b> {clean}<br><br>Apply the recommended fungicide early in the morning. Remove and dispose of all infected plant material away from the field. Ensure adequate spacing between plants for airflow. Continue monitoring every 3–5 days and consult your local agricultural officer if symptoms worsen.",
-        "Nepali": f"<b>रोग:</b> {clean}<br><br>सिफारिश गरिएको ढुसीनाशक बिहान छिटो प्रयोग गर्नुहोस्। संक्रमित बिरुवाको भाग खेतबाट टाढा राखी नष्ट गर्नुहोस्। बिरुवाबिचमा पर्याप्त दूरी राख्नुहोस्। हरेक ३–५ दिनमा निगरानी गर्नुहोस्।",
-        "Hindi": f"<b>बीमारी:</b> {clean}<br><br>सुबह जल्दी अनुशंसित कवकनाशी लगाएं। संक्रमित पौधे सामग्री को खेत से दूर हटाएं और नष्ट करें। पौधों के बीच पर्याप्त दूरी बनाए रखें। हर 3–5 दिनों में निगरानी करें।"
-    }
+    is_healthy = "healthy" in disease.lower()
+
+    if is_healthy:
+        responses = {
+            "English": f"<b>Diagnosis:</b> {clean}<br><br>Your plant appears to be healthy! No disease was detected. Continue with regular watering, proper fertilization, and routine monitoring. Ensure adequate sunlight and good air circulation to keep your plant thriving.",
+            "Nepali": f"<b>निदान:</b> {clean}<br><br>तपाईंको बिरुवा स्वस्थ देखिन्छ! कुनै रोग फेला परेन। नियमित सिँचाइ, उचित मलखाद र नियमित निगरानी जारी राख्नुहोस्। बिरुवालाई राम्रो राख्न पर्याप्त घाम र हावा सुनिश्चित गर्नुहोस्।",
+            "Hindi": f"<b>निदान:</b> {clean}<br><br>आपका पौधा स्वस्थ दिखता है! कोई बीमारी नहीं मिली। नियमित सिंचाई, उचित उर्वरक और नियमित निगरानी जारी रखें। पौधे को अच्छा रखने के लिए पर्याप्त धूप और हवा सुनिश्चित करें।"
+        }
+    else:
+        responses = {
+            "English": f"<b>Diagnosis:</b> {clean}<br><br>Apply the recommended fungicide early in the morning. Remove and dispose of all infected plant material away from the field. Ensure adequate spacing between plants for airflow. Continue monitoring every 3–5 days and consult your local agricultural officer if symptoms worsen.",
+            "Nepali": f"<b>रोग:</b> {clean}<br><br>सिफारिश गरिएको ढुसीनाशक बिहान छिटो प्रयोग गर्नुहोस्। संक्रमित बिरुवाको भाग खेतबाट टाढा राखी नष्ट गर्नुहोस्। बिरुवाबिचमा पर्याप्त दूरी राख्नुहोस्। हरेक ३–५ दिनमा निगरानी गर्नुहोस्।",
+            "Hindi": f"<b>बीमारी:</b> {clean}<br><br>सुबह जल्दी अनुशंसित कवकनाशी लगाएं। संक्रमित पौधे सामग्री को खेत से दूर हटाएं और नष्ट करें। पौधों के बीच पर्याप्त दूरी बनाए रखें। हर 3–5 दिनों में निगरानी करें।"
+        }
+
     return responses.get(lang, responses["English"])
 
-
+# =========================
+# HERO
+# =========================
 st.markdown("""
 <div class="hero">
     <div class="hero-badge">AI-Powered · Final Year Project</div>
@@ -242,6 +442,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# =========================
+# LAYOUT
+# =========================
 col1, col2 = st.columns([1, 1.2], gap="large")
 
 with col1:
@@ -253,7 +456,7 @@ with col1:
 
     if uploaded_file:
         st.image(uploaded_file, use_container_width=True, caption="Uploaded leaf image")
-        predict_btn = st.button("🔬 Analyze Disease")
+        predict_btn = st.button(" Analyze Disease")
     else:
         st.markdown("""
         <div class="card" style="text-align:center; padding:2rem;">
@@ -267,7 +470,7 @@ with col1:
 
 with col2:
     if uploaded_file and predict_btn:
-        with st.spinner("🔬 Analyzing leaf..."):
+        with st.spinner("Analyzing leaf..."):
             top3_idx, top3_probs = predict(uploaded_file)
 
         result = class_names[top3_idx[0]]
@@ -290,7 +493,7 @@ with col2:
         if confidence < 0.60:
             st.markdown('<div class="warn-box">⚠️ Low confidence — please upload a clearer, well-lit image.</div>', unsafe_allow_html=True)
 
-        st.markdown('<div class="sec-heading">🏆 Top 3 Predictions</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sec-heading">Top 3 Predictions</div>', unsafe_allow_html=True)
         for i in range(3):
             name = class_names[top3_idx[i]].replace("___", " → ").replace("__", " → ").replace("_", " ")
             pct = top3_probs[i] * 100
@@ -313,7 +516,7 @@ with col2:
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown('<div class="sec-heading">🤖 Farmer AI Advisory</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sec-heading"> Farmer AI Advisory</div>', unsafe_allow_html=True)
         st.markdown(f"""
         <div style="display:flex;align-items:flex-start;gap:0.8rem;">
             <div class="chat-icon">🌿</div>
@@ -324,7 +527,7 @@ with col2:
     elif not uploaded_file:
         st.markdown("""
         <div class="card" style="margin-top:2.5rem;padding:2.5rem;text-align:center;">
-            <div style="font-size:2.5rem;margin-bottom:1rem;">🔬</div>
+            <div style="font-size:2.5rem;margin-bottom:1rem;"></div>
             <div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#4ade80;margin-bottom:0.5rem;">How it works</div>
             <div style="color:#6e7681;font-size:0.88rem;line-height:1.8;">
                 1. Upload a photo of a plant leaf<br>
@@ -338,6 +541,6 @@ with col2:
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 st.markdown("""
 <div style="text-align:center;color:#4d5562;font-size:0.78rem;padding-bottom:1rem;">
-    PlantAI · Final Year Project · Built with TensorFlow & Streamlit · 60 Plant Disease Classes
+    PlantAI — AI Based Plant Disease Detection System · © 2026 Afroj Khan · All Rights Reserved
 </div>
 """, unsafe_allow_html=True)
