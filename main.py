@@ -287,7 +287,7 @@ html, body, [class*="css"] {
 def load_model():
     if not os.path.exists("model.h5"):
         with st.spinner("Downloading model... (first run only, ~120MB)"):
-            url = "https://drive.google.com/file/d/1HHqxrrv_VNW6ydjCKsOu2YrCWCx6em4k/view?usp=drive_link"
+            url = "https://drive.google.com/uc?id=1bIHaucVRm66zzIcEckbYGbLe_WRrebW7"
             gdown.download(url, "model.keras", quiet=False)
     return tf.keras.models.load_model("model.h5", compile=False)
 
