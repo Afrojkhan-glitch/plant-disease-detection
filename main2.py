@@ -280,22 +280,22 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
+
 # LOAD MODEL
-# =========================
+
 @st.cache_resource
 def load_model():
     '''if not os.path.exists("model.keras"):
         with st.spinner("Downloading model... (first run only, ~120MB)"):
-            url = "https://drive.google.com/uc?id=1HHqxrrv_VNW6ydjCKsOu2YrCWCx6em4k"
+            url = "https://drive.google.com/file/d/1HHqxrrv_VNW6ydjCKsOu2YrCWCx6em4k/view?usp=drive_link"
             gdown.download(url, "model.keras", quiet=False, fuzzy=True)'''
     return tf.keras.models.load_model("model.h5", compile=False)
 
 model = load_model()
 
-# =========================
+
 # 60 CLASS NAMES
-# =========================
+
 class_names = [
     'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy',
     'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew', 'Cherry_(including_sour)___healthy',
@@ -318,9 +318,9 @@ class_names = [
     'Wheat__Yellow_Rust', 'Wheat__healthy_Leaf'
 ]
 
-# =========================
+
 # DISEASE KNOWLEDGE BASE
-# =========================
+
 disease_info = {
     "Apple___Apple_scab": {"info": "Fungal disease causing dark scabby lesions on leaves and fruits.", "treatment": "Apply fungicides like captan or myclobutanil.", "prevention": "Remove fallen leaves, improve air circulation.", "advice": "Prune infected branches and monitor regularly."},
     "Apple___Black_rot": {"info": "Fungal disease causing black rotting on fruits and leaves.", "treatment": "Use copper-based fungicide spray.", "prevention": "Remove mummified fruits and dead branches.", "advice": "Sanitize pruning tools between cuts."},
@@ -391,9 +391,9 @@ default_info = {
     "advice": "Monitor regularly and act early for best results."
 }
 
-# =========================
+
 # PREDICTION (224x224)
-# =========================
+
 def predict(image):
     img = tf.keras.preprocessing.image.load_img(image, target_size=(224,224))
     img = tf.keras.preprocessing.image.img_to_array(img)
@@ -403,9 +403,9 @@ def predict(image):
     top3_probs = preds[0][top3_idx]
     return top3_idx, top3_probs
 
-# =========================
+
 # CHATBOT
-# =========================
+
 def chatbot(disease, lang):
     clean = disease.replace("___", " → ").replace("__", " → ").replace("_", " ")
     is_healthy = "healthy" in disease.lower()
@@ -425,9 +425,9 @@ def chatbot(disease, lang):
 
     return responses.get(lang, responses["English"])
 
-# =========================
+
 # HERO
-# =========================
+
 st.markdown("""
 <div class="hero">
     <div class="hero-badge">AI-Powered · Final Year Project</div>
@@ -442,9 +442,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# =========================
+
 # LAYOUT
-# =========================
+
 col1, col2 = st.columns([1, 1.2], gap="large")
 
 with col1:
