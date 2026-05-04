@@ -284,23 +284,13 @@ html, body, [class*="css"] {
 # LOAD MODEL
 
 
-MODEL_PATH = "model.h5"
-
 @st.cache_resource
 def load_model():
-
-    if not os.path.exists(MODEL_PATH):
-        url = "https://drive.google.com/uc?id=1bIHaucVRm66zzIcEckbYGbLe_WRrebW7"
-
-        with st.spinner("Downloading model..."):
-            gdown.download(url, MODEL_PATH, quiet=False)
-
-
-    if not os.path.exists(MODEL_PATH):
-        st.error("❌ Model file not found after download. Drive link failed.")
-        st.stop()
-
-    return tf.keras.models.load_model(MODEL_PATH, compile=False)
+    if not os.path.exists("model.h5"):
+        with st.spinner("Downloading model... (first run only, ~120MB)"):
+            url = "https://drive.google.com/uc?id=1HHqxrrv_VNW6ydjCKsOu2YrCWCx6em4k"
+            gdown.download(url, "model.keras", quiet=False, fuzzy=True)
+    return tf.keras.models.load_model("model.h5", compile=False)
 
 model = load_model()
 
