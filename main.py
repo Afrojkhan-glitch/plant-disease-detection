@@ -5,9 +5,9 @@ import numpy as np
 import gdown
 import os
 
-# =========================
+
 # PAGE CONFIG
-# =========================
+
 st.set_page_config(
     page_title="PlantAI — Disease Detection",
     page_icon="🌿",
@@ -15,9 +15,9 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# =========================
+
 # CUSTOM CSS
-# =========================
+
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
