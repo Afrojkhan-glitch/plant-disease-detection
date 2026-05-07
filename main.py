@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 import gdown
 import os
-
+from tensorflow.keras.layers import InputLayer
 
 # PAGE CONFIG
 
@@ -204,6 +204,11 @@ html, body, [class*="css"] {
 
 
 # LOAD MODEL
+class LegacyInputLayer(InputLayer):
+    def __init__(self, *args, **kwargs):
+        if 'batch_shape' in kwargs:
+            kwargs['shape'] = kwargs.pop('batch_shape')
+        super().__init__(*args, **kwargs)
 
 @st.cache_resource
 def load_model():
@@ -211,25 +216,31 @@ def load_model():
     file_id = "1bIHaucVRm66zzIcEckbYGbLe_WRrebW7"
     url = f'https://drive.google.com/uc?id={file_id}'
     
+    # 2. Download the model if it doesn't exist
     if not os.path.exists(model_path):
         with st.spinner("Downloading Model from Drive..."):
             gdown.download(url, model_path, quiet=False)
     
     try:
-        return tf.keras.models.load_model(model_path, compile=False, safe_mode=False)
-    except Exception:
-        try:
-            import h5py
-            return tf.keras.models.load_model(h5py.File(model_path,'r'),compile=False)
-        except Exception as e:
-            st.error(f"Load Error: {e}")
-            return None
+        # 3. Load using the legacy translator and safe_mode=False
+        return tf.keras.models.load_model(
+            model_path, 
+            custom_objects={'InputLayer': LegacyInputLayer}, 
+            compile=False,
+            safe_mode=False
+        )
+    except Exception as e:
+        st.error(f"Critical Error during model load: {e}")
+        return None
 
+# Execute the load
 model = load_model()
 
 if model is None:
-    st.error('Model could not be loaded. Please check your file link or Drive permissions.')
+    st.error("Model could not be loaded. Please check Drive permissions or Reboot the app.")
     st.stop()
+
+
 # CLASS NAMES
 
 class_names = [
