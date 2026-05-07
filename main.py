@@ -207,10 +207,16 @@ html, body, [class*="css"] {
 
 class LegacyInputLayer(InputLayer):
     def __init__(self, *args, **kwargs):
-        # We delete the keywords that cause the 'Unrecognized keyword' crash
         kwargs.pop('batch_shape', None)
         kwargs.pop('shape', None)
-        kwargs.pop('batch_input_shape', None)
+        kwargs.pop('dtype_policy', None) # Also pop this just in case
+        super().__init__(*args, **kwargs)
+
+# 2. FIX FOR RESCALING LAYER (DTypePolicy error)
+class LegacyRescaling(Rescaling):
+    def __init__(self, *args, **kwargs):
+        # Remove the 'dtype' or 'dtype_policy' that older TF doesn't understand
+        kwargs.pop('dtype', None)
         super().__init__(*args, **kwargs)
 
 @st.cache_resource
@@ -219,29 +225,32 @@ def load_model():
     file_id = "1bIHaucVRm66zzIcEckbYGbLe_WRrebW7"
     url = f'https://drive.google.com/uc?id={file_id}'
     
-    # Download logic
     if not os.path.exists(model_path):
-        with st.spinner("Downloading Model from Drive..."):
+        with st.spinner("Downloading Model..."):
             gdown.download(url, model_path, quiet=False)
     
     try:
-        # Load using our 'Silent' translator and forcing Safe Mode OFF
+        # We tell Keras to use our 'Legacy' versions of these two layers
         return tf.keras.models.load_model(
             model_path, 
-            custom_objects={'InputLayer': LegacyInputLayer}, 
+            custom_objects={
+                'InputLayer': LegacyInputLayer,
+                'Rescaling': LegacyRescaling
+            }, 
             compile=False,
             safe_mode=False
         )
     except Exception as e:
-        st.error(f"Load Error: {e}")
+        st.error(f"Deep Load Failure: {e}")
         return None
 
-# Execute
 model = load_model()
 
 if model is None:
-    st.error("Model failed to load. Please Delete and Re-deploy the app to clear the cache.")
+    st.error("Model failed to load. Please Delete and Re-deploy to clear the cache.")
     st.stop()
+else:
+    st.success("Model Loaded Successfully!")
 # CLASS NAMES
 
 class_names = [
