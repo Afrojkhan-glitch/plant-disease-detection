@@ -207,9 +207,10 @@ html, body, [class*="css"] {
 
 class LegacyInputLayer(InputLayer):
     def __init__(self, *args, **kwargs):
-        # Remove every keyword that Keras 3 or older Keras 2 might hate
-        for key in ['batch_shape', 'shape', 'batch_input_shape', 'ragged', 'sparse']:
-            kwargs.pop(key, None)
+        # We delete the keywords that cause the 'Unrecognized keyword' crash
+        kwargs.pop('batch_shape', None)
+        kwargs.pop('shape', None)
+        kwargs.pop('batch_input_shape', None)
         super().__init__(*args, **kwargs)
 
 @st.cache_resource
@@ -218,12 +219,13 @@ def load_model():
     file_id = "1bIHaucVRm66zzIcEckbYGbLe_WRrebW7"
     url = f'https://drive.google.com/uc?id={file_id}'
     
+    # Download logic
     if not os.path.exists(model_path):
         with st.spinner("Downloading Model from Drive..."):
             gdown.download(url, model_path, quiet=False)
     
     try:
-        # Load using our 'Total Bypass' translator
+        # Load using our 'Silent' translator and forcing Safe Mode OFF
         return tf.keras.models.load_model(
             model_path, 
             custom_objects={'InputLayer': LegacyInputLayer}, 
@@ -231,21 +233,15 @@ def load_model():
             safe_mode=False
         )
     except Exception as e:
-        # Final fallback: Standard load
-        try:
-            return tf.keras.models.load_model(model_path, compile=False)
-        except Exception as final_e:
-            st.error(f"Critical Failure: {final_e}")
-            return None
+        st.error(f"Load Error: {e}")
+        return None
 
+# Execute
 model = load_model()
 
 if model is None:
-    st.error("Model could not be loaded. Please ensure you have Deleted and Re-deployed the app to clear the cache.")
+    st.error("Model failed to load. Please Delete and Re-deploy the app to clear the cache.")
     st.stop()
-else:
-    st.success("Success! Model is ready.")
-
 # CLASS NAMES
 
 class_names = [
