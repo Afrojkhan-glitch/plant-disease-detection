@@ -8,6 +8,7 @@ from tensorflow.keras.layers import (
     Conv2D, BatchNormalization, Activation, GlobalAveragePooling2D, 
     Dense, Dropout, DepthwiseConv2D, Add, Multiply
 )
+from tensorflow.keras import layers
 
 
 # PAGE CONFIG
@@ -213,7 +214,7 @@ html, body, [class*="css"] {
 def create_legacy_wrapper(LayerClass):
     class LegacyLayer(LayerClass):
         def __init__(self, *args, **kwargs):
-            # Strip out modern keywords that cause 'Unrecognized keyword' crashes
+            # Strip out every modern Keras 3 keyword that causes a crash
             for key in ['batch_shape', 'shape', 'dtype_policy', 'batch_input_shape', 'dtype']:
                 kwargs.pop(key, None)
             super().__init__(*args, **kwargs)
@@ -230,14 +231,18 @@ def load_model():
             gdown.download(url, model_path, quiet=False)
     
     try:
-
-        layers_to_fix = [
-            InputLayer, Rescaling, Normalization, ZeroPadding2D, 
-            Conv2D, BatchNormalization, Activation, GlobalAveragePooling2D, 
-            Dense, Dropout, DepthwiseConv2D, Add, Multiply
+        # 2. DYNAMICALLY MAP ALL STANDARD LAYERS
+        # This fixes every layer in your model at once (Reshape, Conv2D, BN, etc.)
+        all_keras_layers = [
+            'InputLayer', 'Rescaling', 'Normalization', 'ZeroPadding2D', 
+            'Conv2D', 'BatchNormalization', 'Activation', 'GlobalAveragePooling2D', 
+            'Dense', 'Dropout', 'DepthwiseConv2D', 'Add', 'Multiply', 'Reshape'
         ]
         
-        custom_map = {layer.__name__: create_legacy_wrapper(layer) for layer in layers_to_fix}
+        custom_map = {}
+        for name in all_keras_layers:
+            if hasattr(layers, name):
+                custom_map[name] = create_legacy_wrapper(getattr(layers, name))
         
         return tf.keras.models.load_model(
             model_path, 
@@ -253,7 +258,7 @@ def load_model():
 model = load_model()
 
 if model is None:
-    st.error("Model failed to load. Please Delete and Re-deploy the app to clear the cache.")
+    st.error("Model failed to load. Please Delete and Re-deploy to clear the cache.")
     st.stop()
 else:
     st.success("Universal Bridge Active: Model loaded successfully!")
