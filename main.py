@@ -212,21 +212,16 @@ def load_model():
     url = f'https://drive.google.com/uc?id={file_id}'
     
     if not os.path.exists(model_path):
-        with st.spinner("Downloading Model..."):
+        with st.spinner("Downloading Model from Drive..."):
             gdown.download(url, model_path, quiet=False)
     
-    if os.path.getsize(model_path) < 1000000:
-        os.remove(model_path)
-        st.error("Model file is corrupted or download was blocked by Google Drive quota.")
-        return None
-
     try:
         return tf.keras.models.load_model(model_path, compile=False)
-    except Exception as e:
+    except Exception:
         try:
             return tf.keras.models.load_model(model_path, compile=False, safe_mode=False)
-        except Exception as final_e:
-            st.error(f"Final Load Error: {final_e}")
+        except Exception as e:
+            st.error(f"Deep Load Error: {e}")
             return None
 
 model = load_model()
