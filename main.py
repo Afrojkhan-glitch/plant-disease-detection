@@ -205,29 +205,34 @@ html, body, [class*="css"] {
 
 # LOAD MODEL
 
-#@st.cache_resource
+@st.cache_resource
 def load_model():
     model_path = "model.h5"
     file_id = "1bIHaucVRm66zzIcEckbYGbLe_WRrebW7"
     url = f'https://drive.google.com/uc?id={file_id}'
-    if os.path.exists(model_path) and os.path.getsize(model_path) < 1000000:
-        os.remove(model_path)
+    
     if not os.path.exists(model_path):
-        try:
-            with st.spinner("Downloading Model..."):
-                gdown.download(url, model_path, quiet=False)
-        except Exception as e:
-            st.error(f"Download failed: {e}")
-            return None
+        with st.spinner("Downloading Model..."):
+            gdown.download(url, model_path, quiet=False)
+    
+    if os.path.getsize(model_path) < 1000000:
+        os.remove(model_path)
+        st.error("Model file is corrupted or download was blocked by Google Drive quota.")
+        return None
+
     try:
         return tf.keras.models.load_model(model_path, compile=False)
     except Exception as e:
-         st.error(f"Error: {e}")
-         return None
-    return None
+        try:
+            return tf.keras.models.load_model(model_path, compile=False, safe_mode=False)
+        except Exception as final_e:
+            st.error(f"Final Load Error: {final_e}")
+            return None
+
 model = load_model()
+
 if model is None:
-    st.error('Model could not be loaded. Please check you file link')
+    st.error('Model could not be loaded. Please check your file link or Drive permissions.')
     st.stop()
 # CLASS NAMES
 
