@@ -205,7 +205,7 @@ html, body, [class*="css"] {
 
 # LOAD MODEL
 
-@st.cache_resource
+#@st.cache_resource
 def load_model():
     model_path = "model.h5"
     file_id = "1bIHaucVRm66zzIcEckbYGbLe_WRrebW7"
