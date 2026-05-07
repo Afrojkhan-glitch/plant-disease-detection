@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 import gdown
 import os
-from tensorflow.keras.layers import InputLayer,Rescaling
+from tensorflow.keras.layers import InputLayer,Rescaling,Normalization
 
 # PAGE CONFIG
 
@@ -207,12 +207,16 @@ html, body, [class*="css"] {
 
 class LegacyInputLayer(InputLayer):
     def __init__(self, *args, **kwargs):
-        kwargs.pop('batch_shape', None)
-        kwargs.pop('shape', None)
-        kwargs.pop('dtype_policy', None)
+        for key in ['batch_shape', 'shape', 'dtype_policy', 'batch_input_shape']:
+            kwargs.pop(key, None)
         super().__init__(*args, **kwargs)
 
 class LegacyRescaling(Rescaling):
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('dtype', None)
+        super().__init__(*args, **kwargs)
+
+class LegacyNormalization(Normalization):
     def __init__(self, *args, **kwargs):
         kwargs.pop('dtype', None)
         super().__init__(*args, **kwargs)
@@ -228,11 +232,13 @@ def load_model():
             gdown.download(url, model_path, quiet=False)
     
     try:
+        # Bridging the version gap for all three problematic layers
         return tf.keras.models.load_model(
             model_path, 
             custom_objects={
                 'InputLayer': LegacyInputLayer,
-                'Rescaling': LegacyRescaling
+                'Rescaling': LegacyRescaling,
+                'Normalization': LegacyNormalization
             }, 
             compile=False,
             safe_mode=False
@@ -241,14 +247,14 @@ def load_model():
         st.error(f"Deep Load Failure: {e}")
         return None
 
-# Execute the load
+# --- EXECUTION ---
 model = load_model()
 
 if model is None:
-    st.error("Model failed to load. Please Delete and Re-deploy the app to clear the cache.")
+    st.error("Model failed to load. Please Delete and Re-deploy to clear the cache.")
     st.stop()
 else:
-    st.success("Success! The model is now compatible and loaded.")
+    st.success("Success! Model is now compatible and fully loaded.")
     
 # CLASS NAMES
 
