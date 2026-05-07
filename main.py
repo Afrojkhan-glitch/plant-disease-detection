@@ -514,7 +514,7 @@ with col2:
     elif not uploaded_file:
         st.markdown("""
         <div class="card" style="margin-top:2.5rem;padding:2.5rem;text-align:center;">
-            <div style="font-size:2.5rem;margin-bottom:1rem;">🔬</div>
+            <div style="font-size:2.5rem;margin-bottom:1rem;"></div>
             <div style="font-family:'Playfair Display',serif;font-size:1.2rem;
             color:#4ade80;margin-bottom:0.5rem;">How it works</div>
             <div style="color:#6e7681;font-size:0.88rem;line-height:1.8;">
