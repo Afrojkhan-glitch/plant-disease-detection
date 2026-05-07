@@ -1,4 +1,3 @@
-
 import streamlit as st
 import tensorflow as tf
 import numpy as np
@@ -28,14 +27,7 @@ html, body, [class*="css"] {
     color: #e6edf3;
 }
 #MainMenu, footer, header { visibility: hidden; }
-
-/* ── Responsive container ── */
-.block-container {
-    padding: 1rem 1rem !important;
-    max-width: 1100px !important;
-}
-
-/* ── Hero ── */
+.block-container { padding: 1rem 1rem !important; max-width: 1100px !important; }
 .hero {
     background: linear-gradient(135deg, #0a3d1f 0%, #0d5c2e 50%, #0a3d1f 100%);
     border: 1px solid #1a5c30;
@@ -79,8 +71,6 @@ html, body, [class*="css"] {
     border-radius: 20px;
     margin-bottom: 1rem;
 }
-
-/* ── Cards ── */
 .card {
     background: #161b22;
     border: 1px solid #21262d;
@@ -102,13 +92,7 @@ html, body, [class*="css"] {
     margin: 0 0 0.3rem;
     word-break: break-word;
 }
-.result-conf {
-    font-size: 0.9rem;
-    color: #86efac;
-    font-weight: 300;
-}
-
-/* ── Info Grid — responsive ── */
+.result-conf { font-size: 0.9rem; color: #86efac; font-weight: 300; }
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -116,9 +100,7 @@ html, body, [class*="css"] {
     margin-top: 1rem;
 }
 @media (max-width: 600px) {
-    .info-grid {
-        grid-template-columns: 1fr !important;
-    }
+    .info-grid { grid-template-columns: 1fr !important; }
 }
 .info-item {
     background: #0d1117;
@@ -134,39 +116,12 @@ html, body, [class*="css"] {
     font-weight: 500;
     margin-bottom: 0.4rem;
 }
-.info-text {
-    font-size: 0.88rem;
-    color: #c9d1d9;
-    line-height: 1.5;
-}
-
-/* ── Prediction bars ── */
+.info-text { font-size: 0.88rem; color: #c9d1d9; line-height: 1.5; }
 .pred-bar-wrap { margin: 0.5rem 0; }
-.pred-label {
-    font-size: 0.82rem;
-    color: #c9d1d9;
-    margin-bottom: 3px;
-    word-break: break-word;
-}
-.pred-bar-bg {
-    background: #21262d;
-    border-radius: 6px;
-    height: 8px;
-    overflow: hidden;
-}
-.pred-bar-fill {
-    height: 100%;
-    border-radius: 6px;
-    background: linear-gradient(90deg, #166534, #4ade80);
-}
-.pred-pct {
-    font-size: 0.75rem;
-    color: #4ade80;
-    margin-top: 2px;
-    text-align: right;
-}
-
-/* ── Chat bubble ── */
+.pred-label { font-size: 0.82rem; color: #c9d1d9; margin-bottom: 3px; word-break: break-word; }
+.pred-bar-bg { background: #21262d; border-radius: 6px; height: 8px; overflow: hidden; }
+.pred-bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #166534, #4ade80); }
+.pred-pct { font-size: 0.75rem; color: #4ade80; margin-top: 2px; text-align: right; }
 .chat-bubble {
     background: #0d2818;
     border: 1px solid #166534;
@@ -179,8 +134,7 @@ html, body, [class*="css"] {
     word-break: break-word;
 }
 .chat-icon {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     background: #166534;
     border-radius: 50%;
     display: inline-flex;
@@ -190,8 +144,6 @@ html, body, [class*="css"] {
     margin-bottom: 0.5rem;
     flex-shrink: 0;
 }
-
-/* ── Warning box ── */
 .warn-box {
     background: #2d1b00;
     border: 1px solid #d97706;
@@ -201,14 +153,16 @@ html, body, [class*="css"] {
     font-size: 0.88rem;
     margin: 0.8rem 0;
 }
-
-/* ── Stat pills ── */
-.stat-row {
-    display: flex;
-    gap: 0.6rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
+.error-box {
+    background: #2d0000;
+    border: 1px solid #ef4444;
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+    color: #fca5a5;
+    font-size: 0.88rem;
+    margin: 0.8rem 0;
 }
+.stat-row { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
 .stat-pill {
     background: rgba(74,222,128,0.08);
     border: 1px solid rgba(74,222,128,0.2);
@@ -218,15 +172,7 @@ html, body, [class*="css"] {
     color: #86efac;
 }
 .stat-pill strong { color: #4ade80; }
-
-/* ── Divider ── */
-.divider {
-    border: none;
-    border-top: 1px solid #21262d;
-    margin: 1.5rem 0;
-}
-
-/* ── Button ── */
+.divider { border: none; border-top: 1px solid #21262d; margin: 1.5rem 0; }
 .stButton > button {
     background: linear-gradient(135deg, #166534, #15803d) !important;
     color: white !important;
@@ -239,63 +185,37 @@ html, body, [class*="css"] {
     width: 100% !important;
 }
 .stButton > button:hover { opacity: 0.85 !important; }
-
-/* ── Section heading ── */
 .sec-heading {
     font-family: 'Playfair Display', serif;
     font-size: 1.1rem;
     color: #4ade80;
     margin: 1.2rem 0 0.6rem;
 }
-
-/* ── Mobile columns fix ── */
 @media (max-width: 768px) {
-    .block-container {
-        padding: 0.5rem 0.5rem !important;
-    }
-    .hero {
-        padding: 1.5rem 1rem 1rem;
-        border-radius: 14px;
-    }
-    .result-card {
-        padding: 1rem;
-    }
+    .block-container { padding: 0.5rem 0.5rem !important; }
+    .hero { padding: 1.5rem 1rem 1rem; border-radius: 14px; }
+    .result-card { padding: 1rem; }
 }
-
-/* ── File uploader ── */
-[data-testid="stFileUploader"] {
-    width: 100% !important;
-}
-
-/* ── Selectbox ── */
-[data-testid="stSelectbox"] {
-    width: 100% !important;
-}
-
-/* ── Image ── */
-[data-testid="stImage"] img {
-    border-radius: 12px !important;
-    width: 100% !important;
-}
+[data-testid="stFileUploader"] { width: 100% !important; }
+[data-testid="stSelectbox"] { width: 100% !important; }
+[data-testid="stImage"] img { border-radius: 12px !important; width: 100% !important; }
 </style>
 """, unsafe_allow_html=True)
 
 
 # LOAD MODEL
 
-
 @st.cache_resource
 def load_model():
     if not os.path.exists("model.h5"):
-        with st.spinner("Downloading model... (first run only, ~120MB)"):
+        with st.spinner("Loading model... please wait"):
             url = "https://drive.google.com/uc?id=1HHqxrrv_VNW6ydjCKsOu2YrCWCx6em4k"
-            gdown.download(url, "model.keras", quiet=False, fuzzy=True)
+            gdown.download(url, "model.h5", quiet=False, fuzzy=True)
     return tf.keras.models.load_model("model.h5", compile=False)
 
 model = load_model()
 
-
-# 60 CLASS NAMES
+# CLASS NAMES
 
 class_names = [
     'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy',
@@ -393,16 +313,30 @@ default_info = {
 }
 
 
-# PREDICTION (224x224)
+# PREDICTION
 
 def predict(image):
-    img = tf.keras.preprocessing.image.load_img(image, target_size=(224,224))
+    img = tf.keras.preprocessing.image.load_img(image, target_size=(224, 224))
     img = tf.keras.preprocessing.image.img_to_array(img)
     img = np.expand_dims(img, axis=0)
     preds = model.predict(img)
     top3_idx = np.argsort(preds[0])[::-1][:3]
     top3_probs = preds[0][top3_idx]
-    return top3_idx, top3_probs
+    return top3_idx, top3_probs, preds[0]
+
+
+# VALIDATE PREDICTION
+
+def is_valid_prediction(all_preds):
+    sorted_preds = np.sort(all_preds)[::-1]
+    top1 = sorted_preds[0]
+    top2 = sorted_preds[1]
+    gap  = top1 - top2
+    # Car → gap > 90% → REJECT
+    # Real leaf → gap < 90% → ACCEPT
+    if gap > 0.90:
+        return False
+    return True
 
 
 # CHATBOT
@@ -410,20 +344,18 @@ def predict(image):
 def chatbot(disease, lang):
     clean = disease.replace("___", " → ").replace("__", " → ").replace("_", " ")
     is_healthy = "healthy" in disease.lower()
-
     if is_healthy:
         responses = {
             "English": f"<b>Diagnosis:</b> {clean}<br><br>Your plant appears to be healthy! No disease was detected. Continue with regular watering, proper fertilization, and routine monitoring. Ensure adequate sunlight and good air circulation to keep your plant thriving.",
-            "Nepali": f"<b>निदान:</b> {clean}<br><br>तपाईंको बिरुवा स्वस्थ देखिन्छ! कुनै रोग फेला परेन। नियमित सिँचाइ, उचित मलखाद र नियमित निगरानी जारी राख्नुहोस्। बिरुवालाई राम्रो राख्न पर्याप्त घाम र हावा सुनिश्चित गर्नुहोस्।",
-            "Hindi": f"<b>निदान:</b> {clean}<br><br>आपका पौधा स्वस्थ दिखता है! कोई बीमारी नहीं मिली। नियमित सिंचाई, उचित उर्वरक और नियमित निगरानी जारी रखें। पौधे को अच्छा रखने के लिए पर्याप्त धूप और हवा सुनिश्चित करें।"
+            "Nepali":  f"<b>निदान:</b> {clean}<br><br>तपाईंको बिरुवा स्वस्थ देखिन्छ! कुनै रोग फेला परेन। नियमित सिँचाइ, उचित मलखाद र नियमित निगरानी जारी राख्नुहोस्।",
+            "Hindi":   f"<b>निदान:</b> {clean}<br><br>आपका पौधा स्वस्थ दिखता है! कोई बीमारी नहीं मिली। नियमित सिंचाई, उचित उर्वरक और नियमित निगरानी जारी रखें।"
         }
     else:
         responses = {
             "English": f"<b>Diagnosis:</b> {clean}<br><br>Apply the recommended fungicide early in the morning. Remove and dispose of all infected plant material away from the field. Ensure adequate spacing between plants for airflow. Continue monitoring every 3–5 days and consult your local agricultural officer if symptoms worsen.",
-            "Nepali": f"<b>रोग:</b> {clean}<br><br>सिफारिश गरिएको ढुसीनाशक बिहान छिटो प्रयोग गर्नुहोस्। संक्रमित बिरुवाको भाग खेतबाट टाढा राखी नष्ट गर्नुहोस्। बिरुवाबिचमा पर्याप्त दूरी राख्नुहोस्। हरेक ३–५ दिनमा निगरानी गर्नुहोस्।",
-            "Hindi": f"<b>बीमारी:</b> {clean}<br><br>सुबह जल्दी अनुशंसित कवकनाशी लगाएं। संक्रमित पौधे सामग्री को खेत से दूर हटाएं और नष्ट करें। पौधों के बीच पर्याप्त दूरी बनाए रखें। हर 3–5 दिनों में निगरानी करें।"
+            "Nepali":  f"<b>रोग:</b> {clean}<br><br>सिफारिश गरिएको ढुसीनाशक बिहान छिटो प्रयोग गर्नुहोस्। संक्रमित बिरुवाको भाग खेतबाट टाढा राखी नष्ट गर्नुहोस्। हरेक ३–५ दिनमा निगरानी गर्नुहोस्।",
+            "Hindi":   f"<b>बीमारी:</b> {clean}<br><br>सुबह जल्दी अनुशंसित कवकनाशी लगाएं। संक्रमित पौधे सामग्री को खेत से दूर हटाएं। हर 3–5 दिनों में निगरानी करें।"
         }
-
     return responses.get(lang, responses["English"])
 
 
@@ -450,14 +382,18 @@ col1, col2 = st.columns([1, 1.2], gap="large")
 
 with col1:
     st.markdown('<div class="sec-heading">🌍 Language</div>', unsafe_allow_html=True)
-    language = st.selectbox("", ["English", "Nepali", "Hindi"], label_visibility="collapsed")
+    language = st.selectbox("", ["English", "Nepali", "Hindi"],
+                            label_visibility="collapsed")
 
-    st.markdown('<div class="sec-heading">📷 Upload Leaf Image</div>', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+    st.markdown('<div class="sec-heading">📷 Upload Leaf Image</div>',
+                unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"],
+                                     label_visibility="collapsed")
 
     if uploaded_file:
-        st.image(uploaded_file, use_container_width=True, caption="Uploaded leaf image")
-        predict_btn = st.button(" Analyze Disease")
+        st.image(uploaded_file, use_container_width=True,
+                 caption="Uploaded leaf image")
+        predict_btn = st.button("Analyze Disease")
     else:
         st.markdown("""
         <div class="card" style="text-align:center; padding:2rem;">
@@ -472,18 +408,31 @@ with col1:
 with col2:
     if uploaded_file and predict_btn:
         with st.spinner("Analyzing leaf..."):
-            top3_idx, top3_probs = predict(uploaded_file)
+            top3_idx, top3_probs, all_preds = predict(uploaded_file)
 
-        result = class_names[top3_idx[0]]
+        result     = class_names[top3_idx[0]]
         confidence = top3_probs[0]
+
+        # ── Validate ─────────────────────────────────
+        if not is_valid_prediction(all_preds):
+            st.markdown("""
+            <div class="error-box">
+                This does not appear to be a plant leaf image.<br>
+                Please upload a clear photo of a plant leaf.
+            </div>
+            """, unsafe_allow_html=True)
+            st.stop()
+
+        # ── Result card ──────────────────────────────
         clean_result = result.replace("___", " → ").replace("__", " → ").replace("_", " ")
-        is_healthy = "healthy" in result.lower()
-        color = "#4ade80" if is_healthy else "#f87171"
-        icon = "✅" if is_healthy else "⚠️"
+        is_healthy   = "healthy" in result.lower()
+        color        = "#4ade80" if is_healthy else "#f87171"
+        icon         = "✅" if is_healthy else "⚠️"
 
         st.markdown(f"""
         <div class="result-card" style="border-color:{color};">
-            <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:{color};margin-bottom:0.5rem;">
+            <div style="font-size:0.75rem;text-transform:uppercase;
+            letter-spacing:0.1em;color:{color};margin-bottom:0.5rem;">
                 {icon} Diagnosis Result
             </div>
             <div class="result-disease" style="color:{color};">{clean_result}</div>
@@ -492,32 +441,57 @@ with col2:
         """, unsafe_allow_html=True)
 
         if confidence < 0.60:
-            st.markdown('<div class="warn-box">⚠️ Low confidence — please upload a clearer, well-lit image.</div>', unsafe_allow_html=True)
+            st.markdown("""
+            <div class="warn-box">
+            ⚠️ Low confidence — please upload a clearer, well-lit image.
+            </div>
+            """, unsafe_allow_html=True)
 
-        st.markdown('<div class="sec-heading">Top 3 Predictions</div>', unsafe_allow_html=True)
+        # ── Top 3 ────────────────────────────────────
+        st.markdown('<div class="sec-heading">Top 3 Predictions</div>',
+                    unsafe_allow_html=True)
         for i in range(3):
-            name = class_names[top3_idx[i]].replace("___", " → ").replace("__", " → ").replace("_", " ")
+            name = class_names[top3_idx[i]].replace(
+                "___", " → ").replace("__", " → ").replace("_", " ")
             pct = top3_probs[i] * 100
             st.markdown(f"""
             <div class="pred-bar-wrap">
                 <div class="pred-label">{name}</div>
-                <div class="pred-bar-bg"><div class="pred-bar-fill" style="width:{int(pct)}%"></div></div>
+                <div class="pred-bar-bg">
+                    <div class="pred-bar-fill" style="width:{int(pct)}%"></div>
+                </div>
                 <div class="pred-pct">{pct:.1f}%</div>
             </div>
             """, unsafe_allow_html=True)
 
+        # ── Disease info ─────────────────────────────
         info = disease_info.get(result, default_info)
-        st.markdown('<div class="sec-heading">📋 Disease Information</div>', unsafe_allow_html=True)
+        st.markdown('<div class="sec-heading">📋 Disease Information</div>',
+                    unsafe_allow_html=True)
         st.markdown(f"""
         <div class="info-grid">
-            <div class="info-item"><div class="info-label">ℹ️ About</div><div class="info-text">{info["info"]}</div></div>
-            <div class="info-item"><div class="info-label">💊 Treatment</div><div class="info-text">{info["treatment"]}</div></div>
-            <div class="info-item"><div class="info-label">🛡️ Prevention</div><div class="info-text">{info["prevention"]}</div></div>
-            <div class="info-item"><div class="info-label">🌾 Advice</div><div class="info-text">{info["advice"]}</div></div>
+            <div class="info-item">
+                <div class="info-label">ℹ️ About</div>
+                <div class="info-text">{info["info"]}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">💊 Treatment</div>
+                <div class="info-text">{info["treatment"]}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">🛡️ Prevention</div>
+                <div class="info-text">{info["prevention"]}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">🌾 Advice</div>
+                <div class="info-text">{info["advice"]}</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown('<div class="sec-heading"> Farmer AI Advisory</div>', unsafe_allow_html=True)
+        # ── Farmer AI Advisory ───────────────────────
+        st.markdown('<div class="sec-heading">🌾 Farmer AI Advisory</div>',
+                    unsafe_allow_html=True)
         st.markdown(f"""
         <div style="display:flex;align-items:flex-start;gap:0.8rem;">
             <div class="chat-icon">🌿</div>
@@ -528,8 +502,9 @@ with col2:
     elif not uploaded_file:
         st.markdown("""
         <div class="card" style="margin-top:2.5rem;padding:2.5rem;text-align:center;">
-            <div style="font-size:2.5rem;margin-bottom:1rem;"></div>
-            <div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#4ade80;margin-bottom:0.5rem;">How it works</div>
+            <div style="font-size:2.5rem;margin-bottom:1rem;">🔬</div>
+            <div style="font-family:'Playfair Display',serif;font-size:1.2rem;
+            color:#4ade80;margin-bottom:0.5rem;">How it works</div>
             <div style="color:#6e7681;font-size:0.88rem;line-height:1.8;">
                 1. Upload a photo of a plant leaf<br>
                 2. Click Analyze Disease<br>
@@ -538,6 +513,9 @@ with col2:
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+
+# FOOTER
 
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 st.markdown("""
