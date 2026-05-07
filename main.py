@@ -216,12 +216,13 @@ def load_model():
             gdown.download(url, model_path, quiet=False)
     
     try:
-        return tf.keras.models.load_model(model_path, compile=False)
+        return tf.keras.models.load_model(model_path, compile=False, safe_mode=False)
     except Exception:
         try:
-            return tf.keras.models.load_model(model_path, compile=False, safe_mode=False)
+            import h5py
+            return tf.keras.models.load_model(h5py.File(model_path,'r'),compile=False)
         except Exception as e:
-            st.error(f"Deep Load Error: {e}")
+            st.error(f"Load Error: {e}")
             return None
 
 model = load_model()
