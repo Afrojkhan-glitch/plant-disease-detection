@@ -3,7 +3,12 @@ import tensorflow as tf
 import numpy as np
 import gdown
 import os
-from tensorflow.keras.layers import InputLayer, Rescaling, Normalization, ZeroPadding2D, Conv2D, Dense
+from tensorflow.keras.layers import (
+    InputLayer, Rescaling, Normalization, ZeroPadding2D, 
+    Conv2D, BatchNormalization, Activation, GlobalAveragePooling2D, 
+    Dense, Dropout, DepthwiseConv2D, Add, Multiply
+)
+
 
 # PAGE CONFIG
 
@@ -205,10 +210,10 @@ html, body, [class*="css"] {
 
 # LOAD MODEL
 
-
 def create_legacy_wrapper(LayerClass):
     class LegacyLayer(LayerClass):
         def __init__(self, *args, **kwargs):
+            # Strip out modern keywords that cause 'Unrecognized keyword' crashes
             for key in ['batch_shape', 'shape', 'dtype_policy', 'batch_input_shape', 'dtype']:
                 kwargs.pop(key, None)
             super().__init__(*args, **kwargs)
@@ -225,14 +230,14 @@ def load_model():
             gdown.download(url, model_path, quiet=False)
     
     try:
-        custom_map = {
-            'InputLayer': create_legacy_wrapper(InputLayer),
-            'Rescaling': create_legacy_wrapper(Rescaling),
-            'Normalization': create_legacy_wrapper(Normalization),
-            'ZeroPadding2D': create_legacy_wrapper(ZeroPadding2D),
-            'Conv2D': create_legacy_wrapper(Conv2D),
-            'Dense': create_legacy_wrapper(Dense)
-        }
+
+        layers_to_fix = [
+            InputLayer, Rescaling, Normalization, ZeroPadding2D, 
+            Conv2D, BatchNormalization, Activation, GlobalAveragePooling2D, 
+            Dense, Dropout, DepthwiseConv2D, Add, Multiply
+        ]
+        
+        custom_map = {layer.__name__: create_legacy_wrapper(layer) for layer in layers_to_fix}
         
         return tf.keras.models.load_model(
             model_path, 
@@ -251,7 +256,7 @@ if model is None:
     st.error("Model failed to load. Please Delete and Re-deploy the app to clear the cache.")
     st.stop()
 else:
-    st.success("Success! The entire model architecture has been bridged and loaded.")
+    st.success("Universal Bridge Active: Model loaded successfully!")
     
 # CLASS NAMES
 
