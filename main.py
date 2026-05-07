@@ -214,17 +214,15 @@ def load_model():
         os.remove(model_path)
     if not os.path.exists(model_path):
         try:
-            with st.spinner("Fetching AI Model from Drive..."):
+            with st.spinner("Downloading Model..."):
                 gdown.download(url, model_path, quiet=False)
         except Exception as e:
             st.error(f"Download failed: {e}")
             return None
-    if os.path.exists(model_path):
-        try:
-            return tf.keras.models.load_model(model_path, compile=False)
-        except Exception as e:
-            st.error(f"Error loading model weights: {e}")
-            os.remove(model_path) 
+    try:
+        return tf.keras.models.load_model(model_path, compile=False)
+    except Exception as e:
+         st.error(f"Error: {e}")
             return None
     return None
 model = load_model()
