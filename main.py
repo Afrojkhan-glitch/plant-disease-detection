@@ -3,11 +3,6 @@ import tensorflow as tf
 import numpy as np
 import gdown
 import os
-from tensorflow.keras.layers import (
-    InputLayer, Rescaling, Normalization, ZeroPadding2D, 
-    Conv2D, BatchNormalization, Activation, GlobalAveragePooling2D, 
-    Dense, Dropout, DepthwiseConv2D, Add, Multiply
-)
 from tensorflow.keras import layers
 
 
@@ -222,7 +217,6 @@ def load_model():
             gdown.download(url, model_path, quiet=False)
     
     try:
-        # With Keras 3.0+, we can use the standard loader directly
         return tf.keras.models.load_model(model_path, compile=False)
     except Exception as e:
         st.error(f"Load Failure: {e}")
@@ -230,8 +224,8 @@ def load_model():
 
 model = load_model()
 
-if model:
-    st.success("Model loaded successfully using Keras 3!")
+if model is None:
+    st.stop()
     
 # CLASS NAMES
 
