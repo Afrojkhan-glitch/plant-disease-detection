@@ -207,8 +207,9 @@ html, body, [class*="css"] {
 
 class LegacyInputLayer(InputLayer):
     def __init__(self, *args, **kwargs):
-        kwargs.pop('batch_shape', None)
-        kwargs.pop('shape', None)
+        # Remove every keyword that Keras 3 or older Keras 2 might hate
+        for key in ['batch_shape', 'shape', 'batch_input_shape', 'ragged', 'sparse']:
+            kwargs.pop(key, None)
         super().__init__(*args, **kwargs)
 
 @st.cache_resource
@@ -218,15 +219,11 @@ def load_model():
     url = f'https://drive.google.com/uc?id={file_id}'
     
     if not os.path.exists(model_path):
-        with st.spinner("Downloading Model from Drive... This may take a minute."):
-            try:
-                gdown.download(url, model_path, quiet=False)
-            except Exception as e:
-                st.error(f"Download failed: {e}")
-                return None
-
+        with st.spinner("Downloading Model from Drive..."):
+            gdown.download(url, model_path, quiet=False)
+    
     try:
-
+        # Load using our 'Total Bypass' translator
         return tf.keras.models.load_model(
             model_path, 
             custom_objects={'InputLayer': LegacyInputLayer}, 
@@ -234,21 +231,20 @@ def load_model():
             safe_mode=False
         )
     except Exception as e:
+        # Final fallback: Standard load
         try:
-
             return tf.keras.models.load_model(model_path, compile=False)
         except Exception as final_e:
-            st.error(f"Final Load Failure: {final_e}")
+            st.error(f"Critical Failure: {final_e}")
             return None
 
-# --- EXECUTION ---
 model = load_model()
 
 if model is None:
-    st.error("Model could not be loaded. Please ensure your Drive link is public and reboot the app.")
+    st.error("Model could not be loaded. Please ensure you have Deleted and Re-deployed the app to clear the cache.")
     st.stop()
 else:
-    st.success("Model loaded successfully!")
+    st.success("Success! Model is ready.")
 
 # CLASS NAMES
 
