@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 import gdown
 import os
-from tensorflow.keras.layers import InputLayer
+from tensorflow.keras.layers import InputLayer,Rescaling
 
 # PAGE CONFIG
 
@@ -209,13 +209,11 @@ class LegacyInputLayer(InputLayer):
     def __init__(self, *args, **kwargs):
         kwargs.pop('batch_shape', None)
         kwargs.pop('shape', None)
-        kwargs.pop('dtype_policy', None) # Also pop this just in case
+        kwargs.pop('dtype_policy', None)
         super().__init__(*args, **kwargs)
 
-# 2. FIX FOR RESCALING LAYER (DTypePolicy error)
 class LegacyRescaling(Rescaling):
     def __init__(self, *args, **kwargs):
-        # Remove the 'dtype' or 'dtype_policy' that older TF doesn't understand
         kwargs.pop('dtype', None)
         super().__init__(*args, **kwargs)
 
@@ -226,11 +224,10 @@ def load_model():
     url = f'https://drive.google.com/uc?id={file_id}'
     
     if not os.path.exists(model_path):
-        with st.spinner("Downloading Model..."):
+        with st.spinner("Downloading Model from Drive..."):
             gdown.download(url, model_path, quiet=False)
     
     try:
-        # We tell Keras to use our 'Legacy' versions of these two layers
         return tf.keras.models.load_model(
             model_path, 
             custom_objects={
@@ -244,13 +241,15 @@ def load_model():
         st.error(f"Deep Load Failure: {e}")
         return None
 
+# Execute the load
 model = load_model()
 
 if model is None:
-    st.error("Model failed to load. Please Delete and Re-deploy to clear the cache.")
+    st.error("Model failed to load. Please Delete and Re-deploy the app to clear the cache.")
     st.stop()
 else:
-    st.success("Model Loaded Successfully!")
+    st.success("Success! The model is now compatible and loaded.")
+    
 # CLASS NAMES
 
 class_names = [
