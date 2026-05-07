@@ -223,7 +223,7 @@ def load_model():
         return tf.keras.models.load_model(model_path, compile=False)
     except Exception as e:
          st.error(f"Error: {e}")
-            return None
+         return None
     return None
 model = load_model()
 if model is None:
