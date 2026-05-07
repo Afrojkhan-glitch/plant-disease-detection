@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 import gdown
 import os
-from tensorflow.keras.layers import InputLayer,Rescaling,Normalization
+from tensorflow.keras.layers import InputLayer, Rescaling, Normalization, ZeroPadding2D, Conv2D, Dense
 
 # PAGE CONFIG
 
@@ -205,21 +205,14 @@ html, body, [class*="css"] {
 
 # LOAD MODEL
 
-class LegacyInputLayer(InputLayer):
-    def __init__(self, *args, **kwargs):
-        for key in ['batch_shape', 'shape', 'dtype_policy', 'batch_input_shape']:
-            kwargs.pop(key, None)
-        super().__init__(*args, **kwargs)
 
-class LegacyRescaling(Rescaling):
-    def __init__(self, *args, **kwargs):
-        kwargs.pop('dtype', None)
-        super().__init__(*args, **kwargs)
-
-class LegacyNormalization(Normalization):
-    def __init__(self, *args, **kwargs):
-        kwargs.pop('dtype', None)
-        super().__init__(*args, **kwargs)
+def create_legacy_wrapper(LayerClass):
+    class LegacyLayer(LayerClass):
+        def __init__(self, *args, **kwargs):
+            for key in ['batch_shape', 'shape', 'dtype_policy', 'batch_input_shape', 'dtype']:
+                kwargs.pop(key, None)
+            super().__init__(*args, **kwargs)
+    return LegacyLayer
 
 @st.cache_resource
 def load_model():
@@ -232,14 +225,18 @@ def load_model():
             gdown.download(url, model_path, quiet=False)
     
     try:
-        # Bridging the version gap for all three problematic layers
+        custom_map = {
+            'InputLayer': create_legacy_wrapper(InputLayer),
+            'Rescaling': create_legacy_wrapper(Rescaling),
+            'Normalization': create_legacy_wrapper(Normalization),
+            'ZeroPadding2D': create_legacy_wrapper(ZeroPadding2D),
+            'Conv2D': create_legacy_wrapper(Conv2D),
+            'Dense': create_legacy_wrapper(Dense)
+        }
+        
         return tf.keras.models.load_model(
             model_path, 
-            custom_objects={
-                'InputLayer': LegacyInputLayer,
-                'Rescaling': LegacyRescaling,
-                'Normalization': LegacyNormalization
-            }, 
+            custom_objects=custom_map, 
             compile=False,
             safe_mode=False
         )
@@ -251,10 +248,10 @@ def load_model():
 model = load_model()
 
 if model is None:
-    st.error("Model failed to load. Please Delete and Re-deploy to clear the cache.")
+    st.error("Model failed to load. Please Delete and Re-deploy the app to clear the cache.")
     st.stop()
 else:
-    st.success("Success! Model is now compatible and fully loaded.")
+    st.success("Success! The entire model architecture has been bridged and loaded.")
     
 # CLASS NAMES
 
