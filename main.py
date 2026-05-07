@@ -204,10 +204,11 @@ html, body, [class*="css"] {
 
 
 # LOAD MODEL
+
 class LegacyInputLayer(InputLayer):
     def __init__(self, *args, **kwargs):
-        if 'batch_shape' in kwargs:
-            kwargs['shape'] = kwargs.pop('batch_shape')
+        kwargs.pop('batch_shape', None)
+        kwargs.pop('shape', None)
         super().__init__(*args, **kwargs)
 
 @st.cache_resource
@@ -216,13 +217,16 @@ def load_model():
     file_id = "1bIHaucVRm66zzIcEckbYGbLe_WRrebW7"
     url = f'https://drive.google.com/uc?id={file_id}'
     
-    # 2. Download the model if it doesn't exist
     if not os.path.exists(model_path):
-        with st.spinner("Downloading Model from Drive..."):
-            gdown.download(url, model_path, quiet=False)
-    
+        with st.spinner("Downloading Model from Drive... This may take a minute."):
+            try:
+                gdown.download(url, model_path, quiet=False)
+            except Exception as e:
+                st.error(f"Download failed: {e}")
+                return None
+
     try:
-        # 3. Load using the legacy translator and safe_mode=False
+
         return tf.keras.models.load_model(
             model_path, 
             custom_objects={'InputLayer': LegacyInputLayer}, 
@@ -230,16 +234,21 @@ def load_model():
             safe_mode=False
         )
     except Exception as e:
-        st.error(f"Critical Error during model load: {e}")
-        return None
+        try:
 
-# Execute the load
+            return tf.keras.models.load_model(model_path, compile=False)
+        except Exception as final_e:
+            st.error(f"Final Load Failure: {final_e}")
+            return None
+
+# --- EXECUTION ---
 model = load_model()
 
 if model is None:
-    st.error("Model could not be loaded. Please check Drive permissions or Reboot the app.")
+    st.error("Model could not be loaded. Please ensure your Drive link is public and reboot the app.")
     st.stop()
-
+else:
+    st.success("Model loaded successfully!")
 
 # CLASS NAMES
 
