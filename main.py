@@ -211,15 +211,6 @@ html, body, [class*="css"] {
 
 # LOAD MODEL
 
-def create_legacy_wrapper(LayerClass):
-    class LegacyLayer(LayerClass):
-        def __init__(self, *args, **kwargs):
-            # Strip out every modern Keras 3 keyword that causes a crash
-            for key in ['batch_shape', 'shape', 'dtype_policy', 'batch_input_shape', 'dtype']:
-                kwargs.pop(key, None)
-            super().__init__(*args, **kwargs)
-    return LegacyLayer
-
 @st.cache_resource
 def load_model():
     model_path = "model.h5"
@@ -231,37 +222,16 @@ def load_model():
             gdown.download(url, model_path, quiet=False)
     
     try:
-        # 2. DYNAMICALLY MAP ALL STANDARD LAYERS
-        # This fixes every layer in your model at once (Reshape, Conv2D, BN, etc.)
-        all_keras_layers = [
-            'InputLayer', 'Rescaling', 'Normalization', 'ZeroPadding2D', 
-            'Conv2D', 'BatchNormalization', 'Activation', 'GlobalAveragePooling2D', 
-            'Dense', 'Dropout', 'DepthwiseConv2D', 'Add', 'Multiply', 'Reshape'
-        ]
-        
-        custom_map = {}
-        for name in all_keras_layers:
-            if hasattr(layers, name):
-                custom_map[name] = create_legacy_wrapper(getattr(layers, name))
-        
-        return tf.keras.models.load_model(
-            model_path, 
-            custom_objects=custom_map, 
-            compile=False,
-            safe_mode=False
-        )
+        # With Keras 3.0+, we can use the standard loader directly
+        return tf.keras.models.load_model(model_path, compile=False)
     except Exception as e:
-        st.error(f"Deep Load Failure: {e}")
+        st.error(f"Load Failure: {e}")
         return None
 
-# --- EXECUTION ---
 model = load_model()
 
-if model is None:
-    st.error("Model failed to load. Please Delete and Re-deploy to clear the cache.")
-    st.stop()
-else:
-    st.success("Universal Bridge Active: Model loaded successfully!")
+if model:
+    st.success("Model loaded successfully using Keras 3!")
     
 # CLASS NAMES
 
