@@ -207,14 +207,27 @@ html, body, [class*="css"] {
 
 @st.cache_resource
 def load_model():
-    if not os.path.exists("model.h5"):
-        with st.spinner("Loading model... please wait"):
-            url = "https://drive.google.com/uc?id=1HHqxrrv_VNW6ydjCKsOu2YrCWCx6em4k"
-            gdown.download(url, "model.h5", quiet=False, fuzzy=True)
-    return tf.keras.models.load_model("model.h5", compile=False)
+    model_path = "model.h5"
+    # Your specific File ID from the link provided:
+    file_id = "1bIHaucVRm66zzIcEckbYGbLe_WRrebW7"
+    url = f'https://drive.google.com/uc?id={file_id}'
+    
+    if not os.path.exists(model_path):
+        try:
+            with st.spinner("Downloading PlantAI Model... Please wait."):
+                # Direct download using ID is the most stable method
+                gdown.download(url, model_path, quiet=False)
+        except Exception as e:
+            st.error(f"Download failed: {e}")
+            return None
 
+    if os.path.exists(model_path):
+        return tf.keras.models.load_model(model_path, compile=False)
+    return None
 model = load_model()
-
+if model is None:
+    st.error('Model could not be loaded. Please check you file link')
+    st.stop()
 # CLASS NAMES
 
 class_names = [
