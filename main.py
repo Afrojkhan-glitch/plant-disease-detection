@@ -5,9 +5,9 @@ import gdown
 import os
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
-
+# =========================
 # PAGE CONFIG
-
+# =========================
 st.set_page_config(
     page_title="PlantAI — Disease Detection",
     page_icon="🌿",
@@ -15,8 +15,9 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# =========================
 # CUSTOM CSS
-
+# =========================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
@@ -89,9 +90,9 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-
+# =========================
 # LOAD MODEL
-
+# =========================
 @st.cache_resource
 def load_model():
     model_path = "model.keras"
@@ -113,8 +114,9 @@ model = load_model()
 if model is None:
     st.stop()
 
+# =========================
 # 61 CLASS NAMES
-
+# =========================
 class_names = [
     "APPLE - APPLE SCAB", "APPLE - BLACK ROT", "APPLE - CEDAR APPLE RUST", "APPLE - HEALTHY",
     "BLUEBERRY - HEALTHY", "CHERRY (INCLUDING SOUR) - POWDERY MILDEW", "CHERRY (INCLUDING SOUR) - HEALTHY",
@@ -136,9 +138,9 @@ class_names = [
     "WHEAT HEALTHY LEAF", "NOT A LEAF"
 ]
 
-
+# =========================
 # DISEASE KNOWLEDGE BASE
-
+# =========================
 disease_info = {
     "APPLE - APPLE SCAB": {"info": "Fungal disease causing dark scabby lesions on leaves and fruits.", "treatment": "Apply fungicides like captan or myclobutanil.", "prevention": "Remove fallen leaves, improve air circulation.", "advice": "Prune infected branches and monitor regularly."},
     "APPLE - BLACK ROT": {"info": "Fungal disease causing black rotting on fruits and leaves.", "treatment": "Use copper-based fungicide spray.", "prevention": "Remove mummified fruits and dead branches.", "advice": "Sanitize pruning tools between cuts."},
@@ -210,10 +212,11 @@ default_info = {
     "advice": "Monitor the plant regularly."
 }
 
+# =========================
 # PREDICTION LOGIC
-
+# =========================
 def predict(image):
-
+    # Changed to 380 because your model is EfficientNetB4
     img = tf.keras.preprocessing.image.load_img(image, target_size=(380, 380))
     img_array = tf.keras.preprocessing.image.img_to_array(img)
     img_preprocessed = preprocess_input(img_array)
@@ -227,26 +230,39 @@ def predict(image):
 # CHATBOT
 
 def chatbot(disease, lang):
-    clean = disease.replace("___", " → ").replace("__", " → ").replace("_", " ")
+    clean = disease.replace("_", " ").replace("-", " ").replace("  ", " ")
     is_healthy = "healthy" in disease.lower()
-    if is_healthy:
+    
+    # 1. ADD THIS NEW BRANCH FIRST
+    if disease == "NOT A LEAF":
         responses = {
-            "English": f"<b>Diagnosis:</b> {clean}<br><br>Your plant appears to be healthy! No disease was detected. Continue with regular watering, proper fertilization, and routine monitoring. Ensure adequate sunlight and good air circulation to keep your plant thriving.",
-            "Nepali":  f"<b>निदान:</b> {clean}<br><br>तपाईंको बिरुवा स्वस्थ देखिन्छ! कुनै रोग फेला परेन। नियमित सिँचाइ, उचित मलखाद र नियमित निगरानी जारी राख्नुहोस्।",
-            "Hindi":   f"<b>निदान:</b> {clean}<br><br>आपका पौधा स्वस्थ दिखता है! कोई बीमारी नहीं मिली। नियमित सिंचाई, उचित उर्वरक और नियमित निगरानी जारी रखें।"
+            "English": f"<b>Diagnosis:</b> {clean}<br><br>This image does not appear to be a plant leaf. Please upload a clear photo of a leaf for disease analysis.",
+            "Nepali": f"<b>निदान:</b> {clean}<br><br>यो बिरुवाको पात जस्तो देखिँदैन। कृपया विश्लेषणको लागि पातको स्पष्ट फोटो अपलोड गर्नुहोस्।",
+            "Hindi": f"<b>निदान:</b> {clean}<br><br>यह पौधे की पत्ती नहीं लग रही है। कृपया विश्लेषण के लिए पत्ती की स्पष्ट फोटो अपलोड करें।"
         }
+    
+    # 2. YOUR EXISTING HEALTHY BRANCH
+    elif is_healthy:
+        responses = {
+            "English": f"<b>Diagnosis:</b> {clean}<br><br>Your plant appears to be healthy! No disease was detected. Continue regular care.",
+            "Nepali": f"<b>निदान:</b> {clean}<br><br>तपाईंको बिरुवा स्वस्थ देखिन्छ! कुनै रोग फेला परेन।",
+            "Hindi": f"<b>निदान:</b> {clean}<br><br>आपका पौधा स्वस्थ दिखता है! कोई बीमारी नहीं मिली।"
+        }
+    
+    # 3. YOUR EXISTING DISEASE BRANCH
     else:
         responses = {
-            "English": f"<b>Diagnosis:</b> {clean}<br><br>Apply the recommended fungicide early in the morning. Remove and dispose of all infected plant material away from the field. Ensure adequate spacing between plants for airflow. Continue monitoring every 3–5 days and consult your local agricultural officer if symptoms worsen.",
-            "Nepali":  f"<b>रोग:</b> {clean}<br><br>सिफारिश गरिएको ढुसीनाशक बिहान छिटो प्रयोग गर्नुहोस्। संक्रमित बिरुवाको भाग खेतबाट टाढा राखी नष्ट गर्नुहोस्। हरेक ३–५ दिनमा निगरानी गर्नुहोस्।",
-            "Hindi":   f"<b>बीमारी:</b> {clean}<br><br>सुबह जल्दी अनुशंसित कवकनाशी लगाएं। संक्रमित पौधे सामग्री को खेत से दूर हटाएं। हर 3–5 दिनों में निगरानी करें।"
+            "English": f"<b>Diagnosis:</b> {clean}<br><br>Disease detected. Remove and dispose of all infected plant material away from the field. Ensure adequate spacing between plants for airflow. Continue monitoring every 3–5 days and consult your local agricultural officer if symptoms worsen.",
+            "Nepali": f"<b>निदान:</b> {clean}<br><br>रोग फेला पर्यो। संक्रमित हिस्सालाई हटाउनुहोस् र खेतबाट टाढा फाल्नुहोस्।  हरेक ३–५ दिनमा निगरानी गर्नुहोस्।",
+            "Hindi": f"<b>निदान:</b> {clean}<br><br>बीमारी का पता चला। संक्रमित सामग्री को हटा दें और खेत से दूर फेंक दें। हर 3–5 दिनों में निगरानी करें।"
         }
+        
     return responses.get(lang, responses["English"])
 
 
-
+# =========================
 # UI RENDER
-
+# =========================
 st.markdown("""
 <div class="hero">
     <div class="hero-badge">AI-Powered · Final Year Project</div>
@@ -285,22 +301,52 @@ with col2:
         confidence = top3_probs[0]
 
         if result == "NOT A LEAF":
+    # 1. FIXED: Added 'advice' and 'advisory' specifically for non-leaves
+            info = {
+            "info": "No disease data available for non-plant images.",
+            "advice": "Please upload a clear image of a plant leaf.",
+            "advisory": "Our AI is designed to detect plant diseases. Since no leaf was detected, no agricultural treatment is recommended.",
+            "treatment": "N/A",
+            "prevention": "N/A"
+            }   
             st.markdown(f"""
-            <div class="error-box">
+                <div class="error-box">
                 <div class="error-title">Not a Plant Leaf</div>
                 <div class="error-text">Upload a clear photo. (Confidence: {confidence*100:.1f}%)</div>
             </div>
             """, unsafe_allow_html=True)
+
         else:
             is_healthy = "HEALTHY" in result
             color = "#4ade80" if is_healthy else "#f87171"
-            
+
+            if is_healthy:
+                # 2. FIXED: Specific advisory for healthy leaves so it doesn't mention fungicides
+                info = {
+                "info": "This leaf appears to be healthy.",
+                "advice": "Continue regular watering and monitoring.",
+                "advisory": "The plant is in good health. Maintain current farming practices; no chemical treatment is needed.",
+                "treatment": "N/A",
+                "prevention": "Ensure proper soil nutrition."
+            }
+            else:
+                # 3. FIXED: Pulls specific advisory from your dictionary for diseases
+                info = disease_info.get(result, {
+                    "info": f"Detected: {result}",
+                    "advice": "Consult a local agricultural expert.",
+                    "advisory": f"Detected {result}. Apply recommended treatments mentioned in the boxes above.",
+                    "treatment": "Apply appropriate organic or chemical treatments.",
+                    "prevention": "Improve crop rotation and sanitation."
+                })
+
             st.markdown(f"""
             <div class="result-card" style="border-color:{color};">
                 <div class="result-disease" style="color:{color};">{result}</div>
                 <div class="result-conf">Confidence: {confidence * 100:.1f}%</div>
             </div>
-            """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+
+            # Top 3
             st.markdown('<div class="sec-heading">🏆 Top 3 Predictions</div>', unsafe_allow_html=True)
             for i in range(3):
                 name = class_names[top3_idx[i]]
@@ -313,7 +359,7 @@ with col2:
                 </div>
                 """, unsafe_allow_html=True)
 
-            
+            # Info
             info = disease_info.get(result, default_info)
         st.markdown('<div class="sec-heading">📋 Disease Information</div>',
                     unsafe_allow_html=True)
@@ -336,6 +382,7 @@ with col2:
                 <div class="info-text">{info["advice"]}</div>
             </div>
         </div>
+
         """, unsafe_allow_html=True)
 
         # ── Farmer AI Advisory ───────────────────────
