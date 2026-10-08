@@ -5,6 +5,17 @@ This project is an end-to-end deep learning application that detects plant leaf 
 
 **Live Demo:** [Try the app here](https://plant-disease-detection-4e3l9fkwh9aj52qfydchgc.streamlit.app)
 
+## Screenshots
+
+### Home Page
+![Home Page](assets/home.png)
+
+### Prediction Result
+![Prediction Result](assets/demo.png)
+
+### Disease Information and Advisory
+![Disease Information](assets/advisory.png)
+
 ---
 
 ## Project Requirements
@@ -43,6 +54,7 @@ Deploy the trained model as an easy-to-use web app that helps farmers understand
 ```
 plant-disease-detection/
 │
+├── assets/                        # App screenshots
 ├── main.py                        # Streamlit app (UI, prediction, advisory)
 ├── class_names.json               # Class labels
 ├── requirements.txt               # Python dependencies
