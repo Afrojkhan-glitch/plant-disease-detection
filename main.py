@@ -416,6 +416,6 @@ with col2:
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 st.markdown("""
 <div style="text-align:center;color:#4d5562;font-size:0.78rem;padding-bottom:1rem;">
-    PlantAI — AI Based Plant Disease Detection System · © 2026 Afroj Khan · All Rights Reserved
+    PlantAI — AI Based Plant Disease Detection System · © 2026 Afroj Khan · MIT License
 </div>
 """, unsafe_allow_html=True)
