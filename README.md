@@ -31,7 +31,7 @@ Deploy the trained model as an easy-to-use web app that helps farmers understand
 - **Knowledge Base**: Information, treatment, prevention and advice for every class.
 - **Multi-language Advisory**: English, Nepali and Hindi.
 - **Model Hosting**: The trained model is downloaded automatically from Google Drive on first run.
-- **Live Demo**: [add your Streamlit link here]
+- **Live Demo**: [Try the app here](https://plant-disease-detection-4e3l9fkwh9aj52qfydchgc.streamlit.app)
 
 ---
 
@@ -43,6 +43,7 @@ plant-disease-detection/
 ├── class_names.json        # Class labels
 ├── requirements.txt        # Python dependencies
 ├── README.md               # Project overview
+└── LICENSE                 # License information
 ```
 
 ---
@@ -56,8 +57,15 @@ streamlit run main.py
 ```
 The dataset is over 1 GB, so it is not stored in this repository. On the first run the app downloads the trained model automatically.
 
+---
+
+## License
+This project is licensed under the [MIT License](LICENSE). You are free to use, modify, and share this project with proper attribution.
+
+---
+
 ## About Me
-Hi there! I'm **Afroj Khan**, an aspiring data science and machine learning  with a growing interest in data analyst .
+Hi there! I'm **Afroj Ahmad Khan**, an aspiring data analyst with a growing interest in data science and machine learning.
 I enjoy building end-to-end projects, from cleaning data and writing SQL to training deep learning models and deploying them as web apps.
-This project was my final-year project. It combines computer vision, model deployment and a multi-language advisory system 
-to help farmers detect plant diseases early.
+
+This project was my final-year project. It combines computer vision, model deployment and a multi-language advisory system to help farmers detect plant diseases early.
