@@ -16,10 +16,11 @@ Develop an image classification model using transfer learning (EfficientNet-B4) 
 
 #### Key Specifications
 - **Data Source**: Custom dataset of 100,000+ leaf and non-leaf images on [Kaggle](https://www.kaggle.com/datasets/afrojkhan0220/leaf-nonleaf-image), covering crops such as apple, corn, grape, potato, tomato, rice, wheat and soybean.
+- **Data Split**: 89,601 training, 20,208 validation and 433 test images.
 - **Classes**: 61 total, made up of 60 plant conditions (diseases and healthy leaves) and 1 "NOT A LEAF" class.
 - **Model**: EfficientNet-B4 with transfer learning, input size 380 x 380.
 - **Performance**: 95.06% validation accuracy and 94.7% macro-average F1-score.
-- **Training Strategy**: Three-phase transfer learning (frozen base layers first, then progressive unfreezing and fine-tuning with a reduced learning rate). Data augmentation (flip, rotation, zoom, brightness, contrast) was applied to underrepresented classes to handle class imbalance.
+- **Training Strategy**: Two-phase transfer learning: the pre-trained base was frozen while the classification head was trained, then the last 100 layers were unfrozen and fine-tuned at a lower learning rate. Data augmentation (rotation, zoom, shifts, brightness, flips) and class weights were used to handle class imbalance.
 - **Scope**: Single-image classification with top-3 predictions and confidence scores.
 
 ---
@@ -42,11 +43,12 @@ Deploy the trained model as an easy-to-use web app that helps farmers understand
 ```
 plant-disease-detection/
 │
-├── main.py                 # Streamlit app (UI, prediction, advisory)
-├── class_names.json        # Class labels
-├── requirements.txt        # Python dependencies
-├── README.md               # Project overview
-└── LICENSE                 # License information
+├── main.py                        # Streamlit app (UI, prediction, advisory)
+├── class_names.json               # Class labels
+├── requirements.txt               # Python dependencies
+├── plant-disease-training.ipynb   # Model training notebook (Kaggle)
+├── README.md                      # Project overview
+└── LICENSE                        # License information
 ```
 
 ---
